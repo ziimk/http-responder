@@ -1,0 +1,7 @@
+{
+  "dependencies": {
+    "http-status-codes": "^1.0.6",
+    "koa": "^1.2.4",
+    "koa-router": "^5.4.0"
+  }
+}
