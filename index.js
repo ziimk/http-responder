@@ -1,4 +1,5 @@
 const app = require('koa')();
+const bodyParser = require('koa-bodyparser');
 const http = require('http-status-codes');
 const log = require('./src/log');
 const router = require('./src/router');
@@ -17,13 +18,14 @@ function* pageNotFound(next) {
 }
 
 function* logger(next) {
-	log('REQUEST: ', this.method, this.url);
+	log('REQUEST: ', this.method, this.url, this.request.body);
 
 	yield next;
 }
 
 app
 	.use(pageNotFound)
+	.use(bodyParser())
 	.use(logger)
 	.use(router.routes())
 	.use(router.allowedMethods())

@@ -1,7 +1,17 @@
 {
+  "name": "http-responder",
+  "version": "0.1.0",
+  "description": "Responds to HTTP requests with different statuses",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "author": "Siim Kibus",
+  "license": "ISC",
   "dependencies": {
     "http-status-codes": "^1.0.6",
     "koa": "^1.2.4",
+    "koa-bodyparser": "^2.3.0",
     "koa-router": "^5.4.0"
   }
 }
