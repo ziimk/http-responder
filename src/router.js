@@ -1,11 +1,45 @@
 const http = require('http-status-codes');
 const log = require('./log');
 const router = require('koa-router')();
+let sequenceCounter = 0;
+let previousSequence = '';
 
-function* response(next) {
+function* sequenceResponse(next) {
+	// Check for F(ail) and/or S(uccess) statuses
+	const regex = new RegExp('^[FS]+$');
+	const sequence = this.params.statuses.toUpperCase();
+	const statuses = {
+		F: http.BAD_REQUEST,
+		S: http.OK
+	};
+	const isSequenceOk = regex.test(sequence);
+
+	if (isSequenceOk === true) {
+		if (previousSequence != sequence) {
+			sequenceCounter = 0;
+		}
+
+		this.status = statuses[sequence[sequenceCounter]];
+
+		if (sequenceCounter < sequence.length - 1) {
+			sequenceCounter++;
+		} else {
+			sequenceCounter = 0;
+		}
+
+		previousSequence = sequence;
+	} else {
+		this.status = http.BAD_REQUEST;
+		log('ERROR: not valid statuses for sequence');
+	}
+
+	log('RESPONSE:', this.status);
+
+	yield next;
+}
+
+function* statusResponse(next) {
 	const statusCode = parseInt(this.params.code, 10);
-
-	this.status = http.OK;
 
 	if (!isNaN(statusCode)) {
 		try {
@@ -16,7 +50,7 @@ function* response(next) {
 		}
 	} else {
 		this.status = http.BAD_REQUEST;
-		log(`ERROR: input status is not a number`);
+		log('ERROR: input status is not a number');
 	}
 
 	log('RESPONSE:', this.status);
@@ -25,6 +59,9 @@ function* response(next) {
 }
 
 router
-	.post('/status/:code', response);
+	.get('/sequence/:statuses', sequenceResponse)
+	.get('/status/:code', statusResponse)
+	.post('/sequence/:statuses', sequenceResponse)
+	.post('/status/:code', statusResponse);
 
 module.exports = router;
