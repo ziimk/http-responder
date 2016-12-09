@@ -2,6 +2,7 @@ const app = require('koa')();
 const bodyParser = require('koa-bodyparser');
 const http = require('http-status-codes');
 const log = require('./src/log');
+const port = 3003;
 const router = require('./src/router');
 
 function* pageNotFound(next) {
@@ -29,4 +30,6 @@ app
 	.use(logger)
 	.use(router.routes())
 	.use(router.allowedMethods())
-	.listen(3003);
+	.listen(port);
+
+log(`Listening on port ${port}`);

@@ -19,6 +19,8 @@ function* sequenceResponse(next) {
 			sequenceCounter = 0;
 		}
 
+		log('SEQUENCE:', sequenceCounter);
+
 		this.status = statuses[sequence[sequenceCounter]];
 
 		if (sequenceCounter < sequence.length - 1) {
